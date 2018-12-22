@@ -20,9 +20,11 @@ void Renderer::line(int x0, int y0, int x1, int y1, const RGB &color) {
   float xdiff = (x1 - x0) * diff;
   float ydiff = (y1 - y0) * diff;
 
+  float x = x0;
+  float y = y0;
   for (int i = 0; i < steps; i++) {
-    int x = x0 + xdiff * i;
-    int y = y0 + ydiff * i;
+    x += xdiff;
+    y += ydiff;
     image.set(x, y, color);
   }
 }

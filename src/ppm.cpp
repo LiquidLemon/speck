@@ -7,11 +7,17 @@ PPMImage::PPMImage(size_t width, size_t height) :
 {
 }
 
-void PPMImage::set(size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b) {
+PPMImage::PPMImage(PPMImage &&other) {
+  width = other.width;
+  height = other.height;
+  data = std::move(other.data);
+}
+
+void PPMImage::set(size_t x, size_t y, const RGB& color) {
   size_t pixel = 3 * (x + y * width);
-  data[pixel] = r;
-  data[pixel + 1] = g;
-  data[pixel + 2] = b;
+  data[pixel] = color.r;
+  data[pixel + 1] = color.g;
+  data[pixel + 2] = color.b;
 }
 
 void PPMImage::write(std::ostream &stream) {

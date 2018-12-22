@@ -1,12 +1,17 @@
 #include "ppm.hpp"
+#include "renderer.hpp"
 #include <fstream>
 
 int main() {
-  PPMImage image(256, 256);
-  for (int y = 0; y < 256; y++) {
-    for (int x = 0; x < 256; x++) {
-      image.set(x, y, x, y, (x + y) % 256);
-    }
+  Renderer render(PPMImage(255, 255));
+  for (int i = 0; i < 100; i++) {
+    render.line(
+        rand() % 256,
+        rand() % 256,
+        rand() % 256,
+        rand() % 256,
+        RGB(rand() % 256, rand() % 256, rand() % 256)
+    );
   }
 
   std::ofstream file("test.p6", std::ios::binary);
@@ -14,7 +19,7 @@ int main() {
     throw std::runtime_error("Couldn't open file");
   }
 
-  image.write(file);
+  render.getImage().write(file);
 
   file.close();
 }

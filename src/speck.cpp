@@ -8,7 +8,7 @@
 
 int main() {
   srand(time(0));
-  Renderer render(PPMImage(256, 256));
+  Renderer render(PPMImage(1024, 1024));
 
   std::ifstream head("obj/african_head.obj");
   if (!head.good()) {

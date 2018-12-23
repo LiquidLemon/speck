@@ -48,26 +48,37 @@ void Renderer::line(int x0, int y0, int x1, int y1, const RGB &color) {
 }
 
 void Renderer::triangle(std::array<Vector2i, 3> points, const RGB& color) {
-  std::sort(points.begin(), points.end(), [](auto& a, auto& b) { return a[1] < b[1]; });
+  Vector2i min{image.getWidth() - 1, image.getHeight() - 1};
+  Vector2i max{0, 0};
+  Vector2i bounds = min;
 
-  auto& a = points[0];
-  auto& b = points[1];
-  auto& c = points[2];
-  float dx0 = static_cast<float>(b[0] - a[0]) / (b[1] - a[1]);
-  float dx1 = static_cast<float>(c[0] - a[0]) / (c[1] - a[1]);
-  float x0 = a[0];
-  float x1 = a[0];
-  for (int y = a[1]; y < b[1]; y++) {
-    line(x0, y, x1, y, color);
-    x0 += dx0;
-    x1 += dx1;
+  for (auto& point : points) {
+    for (int i = 0; i < 2; i++) {
+      min[i] = std::max(0, std::min(point[i], min[i]));
+      max[i] = std::min(bounds[i], std::max(point[i], max[i]));
+    }
   }
 
-  dx0 = static_cast<float>(c[0] - b[0]) / (c[1] - b[1]);
-  x0 = b[0];
-  for (int y = b[1]; y <= c[1]; y++) {
-    line(x0, y, x1, y, color);
-    x0 += dx0;
-    x1 += dx1;
+  for (int x = min[0]; x <= max[0]; x++) {
+    for (int y = min[1]; y <= max[1]; y++) {
+      auto u = Vector3f({
+          points[2][0] - points[0][0],
+          points[1][0] - points[0][0],
+          points[0][0] - x
+        }).cross({
+          points[2][1] - points[0][1],
+          points[1][1] - points[0][1],
+          points[0][1] - y
+        });
+      if (abs(u[2]) < 1) {
+        continue;
+      }
+
+      if ((u[0]+u[1])/u[2] > 1 || u[0]/u[2] < 0 || u[1]/u[2] < 0) {
+        continue;
+      }
+
+      image.set(x, y, color);
+    }
   }
 }

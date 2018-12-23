@@ -6,7 +6,14 @@ RGB::RGB(uint8_t r, uint8_t g, uint8_t b) :
   g(g),
   b(b)
 {
-};
+}
+
+RGB::RGB(uint8_t w) :
+  r(w),
+  g(w),
+  b(w)
+{
+}
 
 RGB RGB::random() {
   return RGB(rand() % 256, rand() % 256, rand() % 256);

@@ -3,6 +3,7 @@
 #include <fstream>
 
 int main() {
+  srand(time(0));
   Renderer render(PPMImage(255, 255));
   for (int i = 0; i < 100; i++) {
     render.line(
@@ -10,7 +11,7 @@ int main() {
         rand() % 256,
         rand() % 256,
         rand() % 256,
-        RGB(rand() % 256, rand() % 256, rand() % 256)
+        RGB::random()
     );
   }
 

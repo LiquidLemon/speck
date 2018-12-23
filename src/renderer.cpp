@@ -16,16 +16,25 @@ void Renderer::line(int x0, int y0, int x1, int y1, const RGB &color) {
   int height = abs(y1 - y0);
   int steps = std::max(width, height);
 
-  float diff = 1.0 / steps;
-  float xdiff = (x1 - x0) * diff;
-  float ydiff = (y1 - y0) * diff;
+  int xerror = 0;
+  int yerror = 0;
+  int dx = x0 < x1 ? 1 : -1;
+  int dy = y0 < y1 ? 1 : -1;
 
-  float x = x0;
-  float y = y0;
+  int x = x0;
+  int y = y0;
   for (int i = 0; i < steps; i++) {
-    x += xdiff;
-    y += ydiff;
     image.set(x, y, color);
+    xerror += width * 2;
+    if (xerror > height) {
+      x += dx;
+      xerror -= height * 2;
+    }
+    yerror += height * 2;
+    if (yerror > width) {
+      y += dy;
+      yerror -= width * 2;
+    }
   }
 }
 

@@ -13,6 +13,13 @@ PPMImage::PPMImage(PPMImage &&other) {
   data = std::move(other.data);
 }
 
+size_t PPMImage::getWidth() const {
+  return width;
+}
+size_t PPMImage::getHeight() const {
+  return height;
+}
+
 void PPMImage::set(size_t x, size_t y, const RGB& color) {
   size_t pixel = 3 * (x + y * width);
   data[pixel] = color.r;

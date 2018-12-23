@@ -26,6 +26,7 @@ void Renderer::line(int x0, int y0, int x1, int y1, const RGB &color) {
 
   if (x0 > x1) {
     std::swap(x0, x1);
+    std::swap(y0, y1);
   }
 
   int error = 0;

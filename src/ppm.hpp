@@ -14,6 +14,7 @@ class PPMImage {
 
     void set(size_t x, size_t y, const RGB &color);
     void write(std::ostream &stream);
+    void flipVertically();
 
     size_t getWidth() const;
     size_t getHeight() const;

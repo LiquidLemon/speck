@@ -47,3 +47,27 @@ void Renderer::line(int x0, int y0, int x1, int y1, const RGB &color) {
   }
 }
 
+void Renderer::triangle(std::array<Vector2i, 3> points, const RGB& color) {
+  std::sort(points.begin(), points.end(), [](auto& a, auto& b) { return a[1] < b[1]; });
+
+  auto& a = points[0];
+  auto& b = points[1];
+  auto& c = points[2];
+  float dx0 = static_cast<float>(b[0] - a[0]) / (b[1] - a[1]);
+  float dx1 = static_cast<float>(c[0] - a[0]) / (c[1] - a[1]);
+  float x0 = a[0];
+  float x1 = a[0];
+  for (int y = a[1]; y < b[1]; y++) {
+    line(x0, y, x1, y, color);
+    x0 += dx0;
+    x1 += dx1;
+  }
+
+  dx0 = static_cast<float>(c[0] - b[0]) / (c[1] - b[1]);
+  x0 = b[0];
+  for (int y = b[1]; y <= c[1]; y++) {
+    line(x0, y, x1, y, color);
+    x0 += dx0;
+    x1 += dx1;
+  }
+}

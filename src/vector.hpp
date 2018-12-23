@@ -14,7 +14,9 @@ class Vector {
 
 template <size_t size, typename T>
 Vector<size, T>::Vector(std::initializer_list<T> values) {
-  static_assert(values.size() == size, "Incorrect number of values");
+  if (values.size() != size) {
+    throw std::runtime_error("Incorrect number of values for Vector");
+  }
   std::copy(values.begin(), values.end(), data);
 }
 
@@ -27,3 +29,8 @@ template <typename T>
 using Vector3 = Vector<3, T>;
 
 using Vector3f = Vector3<float>;
+
+template <typename T>
+using Vector2 = Vector<2, T>;
+
+using Vector2i = Vector2<int>;

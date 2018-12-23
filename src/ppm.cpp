@@ -20,6 +20,16 @@ size_t PPMImage::getHeight() const {
   return height;
 }
 
+void PPMImage::flipVertically() {
+  for (int y = 0; y < height / 2; y++) {
+    for (int x = 0; x < width; x++) {
+      std::swap(data[3 * (x + y * width)], data[3 * (x + (height - y - 1) * width)]);
+      std::swap(data[3 * (x + y * width) + 1], data[3 * (x + (height - y - 1) * width) + 1]);
+      std::swap(data[3 * (x + y * width) + 2], data[3 * (x + (height - y - 1) * width) + 2]);
+    }
+  }
+}
+
 void PPMImage::set(size_t x, size_t y, const RGB& color) {
   size_t pixel = 3 * (x + y * width);
   data[pixel] = color.r;

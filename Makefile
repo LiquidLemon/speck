@@ -1,4 +1,4 @@
-CXXFLAGS=-Wall -g
+CXXFLAGS=-Wall -Wno-narrowing -g -std=c++17
 CC=g++
 
 SRCDIR=src

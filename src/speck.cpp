@@ -19,19 +19,31 @@ int main() {
   obj.read(head);
   head.close();
 
-  for (auto &face : obj.faces) {
-    std::array<Vector2i, 3> coords;
+  Vector3f light({ 0, 0, 1 });
 
-    std::transform(face.begin(), face.end(), coords.begin(),
-      [&](int i) -> Vector2i {
-        auto& v = obj.vertices[i];
+  for (auto &face : obj.faces) {
+    std::array<Vector3f, 3> worldCoords;
+
+    std::transform(face.begin(), face.end(), worldCoords.begin(),
+      [&](int i) -> Vector3f { return obj.vertices[i]; }
+    );
+
+    std::array<Vector2i, 3> screenCoords;
+    std::transform(worldCoords.begin(), worldCoords.end(), screenCoords.begin(),
+      [&](auto& v) -> Vector2i {
         return {
-          static_cast<int>((v[0] + 1) * render.getImage().getWidth() / 2),
-          static_cast<int>((v[1] + 1) * render.getImage().getWidth() / 2)
+          (1 + v[0]) * render.getImage().getWidth() / 2,
+          (1 + v[1]) * render.getImage().getHeight() / 2
         };
       }
     );
-    render.triangle(coords, RGB::random());
+
+    auto normal = (worldCoords[0] - worldCoords[1])^(worldCoords[0] - worldCoords[2]);
+    normal.normalize();
+    float intensity = light * normal;
+    if (intensity > 0) {
+      render.triangle(screenCoords, RGB(intensity * 255));
+    }
   }
 
   render.getImage().flipVertically();

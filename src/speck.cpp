@@ -21,6 +21,10 @@ int main() {
 
   Vector3f light({ 0, 0, 1 });
 
+  int zBufferSize = render.getImage().getWidth() * render.getImage().getHeight();
+  float *zBuffer = new float[zBufferSize];
+  std::fill(zBuffer, zBuffer + zBufferSize, -std::numeric_limits<float>::max());
+
   for (auto &face : obj.faces) {
     std::array<Vector3f, 3> worldCoords;
 
@@ -28,12 +32,13 @@ int main() {
       [&](int i) -> Vector3f { return obj.vertices[i]; }
     );
 
-    std::array<Vector2i, 3> screenCoords;
+    std::array<Vector3f, 3> screenCoords;
     std::transform(worldCoords.begin(), worldCoords.end(), screenCoords.begin(),
-      [&](auto& v) -> Vector2i {
+      [&](auto& v) -> Vector3f {
         return {
           (1 + v[0]) * render.getImage().getWidth() / 2,
-          (1 + v[1]) * render.getImage().getHeight() / 2
+          (1 + v[1]) * render.getImage().getHeight() / 2,
+          v[2]
         };
       }
     );
@@ -42,9 +47,11 @@ int main() {
     normal.normalize();
     float intensity = light * normal;
     if (intensity > 0) {
-      render.triangle(screenCoords, RGB(intensity * 255));
+      render.triangle(screenCoords, RGB(intensity * 255), zBuffer);
     }
   }
+
+  delete[] zBuffer;
 
   render.getImage().flipVertically();
 

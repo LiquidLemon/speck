@@ -47,14 +47,14 @@ void Renderer::line(int x0, int y0, int x1, int y1, const RGB &color) {
   }
 }
 
-void Renderer::triangle(std::array<Vector2i, 3> points, const RGB& color) {
-  Vector2i min{image.getWidth() - 1, image.getHeight() - 1};
-  Vector2i max{0, 0};
-  Vector2i bounds = min;
+void Renderer::triangle(std::array<Vector3f, 3> points, const RGB& color, float *zBuffer) {
+  Vector2f min{image.getWidth() - 1, image.getHeight() - 1};
+  Vector2f max{0, 0};
+  Vector2f bounds = min;
 
   for (auto& point : points) {
     for (int i = 0; i < 2; i++) {
-      min[i] = std::max(0, std::min(point[i], min[i]));
+      min[i] = std::max(0.f, std::min(point[i], min[i]));
       max[i] = std::min(bounds[i], std::max(point[i], max[i]));
     }
   }
@@ -62,23 +62,35 @@ void Renderer::triangle(std::array<Vector2i, 3> points, const RGB& color) {
   for (int x = min[0]; x <= max[0]; x++) {
     for (int y = min[1]; y <= max[1]; y++) {
       auto u = Vector3f({
-          points[2][0] - points[0][0],
           points[1][0] - points[0][0],
+          points[2][0] - points[0][0],
           points[0][0] - x
         }).cross({
-          points[2][1] - points[0][1],
           points[1][1] - points[0][1],
+          points[2][1] - points[0][1],
           points[0][1] - y
         });
       if (abs(u[2]) < 1) {
         continue;
       }
 
-      if ((u[0]+u[1])/u[2] > 1 || u[0]/u[2] < 0 || u[1]/u[2] < 0) {
+      auto weights = Vector3f({ 1.f - (u[0]+u[1])/u[2], u[0]/u[2], u[1]/u[2] });
+      if (weights[0] < 0 || weights[1] < 0 || weights[2] < 0) {
         continue;
       }
 
-      image.set(x, y, color);
+      float z = 0;
+      for (int i = 0; i < 3; i++) {
+        z += weights[i] * points[i][2];
+      }
+
+      int zOffset = x + y * image.getWidth();
+      if (!zBuffer || zBuffer[zOffset] < z) {
+        if (zBuffer) {
+          zBuffer[zOffset] = z;
+        }
+        image.set(x, y, color);
+      }
     }
   }
 }

@@ -49,6 +49,7 @@ template <typename T>
 using Vector2 = Vector<2, T>;
 
 using Vector2i = Vector2<int>;
+using Vector2f = Vector2<float>;
 
 template <size_t size, typename T>
 Vector<size, T> Vector<size, T>::operator^(Vector other) {

@@ -31,6 +31,7 @@ void Obj::read(std::istream& stream) {
       Vector2f vector;
       stream >> vector[0];
       stream >> vector[1];
+      uvs.push_back(vector);
     } else {
       stream.ignore(256, '\n');
     }

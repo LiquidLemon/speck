@@ -26,6 +26,7 @@ int main() {
   }
   auto texture = PPMImage::loadP6(diffuse);
   diffuse.close();
+  texture.flipVertically();
 
   Vector3f light({ 0, 0, 1 });
   light.normalize();
@@ -39,6 +40,12 @@ int main() {
 
     std::transform(face.vertices.begin(), face.vertices.end(), worldCoords.begin(),
       [&](int i) -> Vector3f { return obj.vertices[i]; }
+    );
+
+    std::array<Vector2f, 3> uvs;
+
+    std::transform(face.uvs.begin(), face.uvs.end(), uvs.begin(),
+      [&](int i) -> Vector2f { return obj.uvs[i]; }
     );
 
     std::array<Vector3f, 3> screenCoords;
@@ -56,7 +63,7 @@ int main() {
     normal.normalize();
     float intensity = light * normal;
     if (intensity > 0) {
-      render.triangle(screenCoords, RGB(intensity * 255), zBuffer);
+      render.triangle(screenCoords, intensity, zBuffer, uvs, texture);
     }
   }
 

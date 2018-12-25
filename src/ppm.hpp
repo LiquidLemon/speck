@@ -14,6 +14,7 @@ class PPMImage {
 
     static PPMImage loadP6(std::istream& stream);
     void set(size_t x, size_t y, const RGB &color);
+    RGB get(int x, int y) const;
     void write(std::ostream &stream);
     void flipVertically();
 

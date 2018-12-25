@@ -8,6 +8,8 @@ class RGB {
     RGB(uint8_t w);
     ~RGB() = default;
 
+    RGB operator*(float) const;
+
     static RGB random();
 
     static const RGB red;

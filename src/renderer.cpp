@@ -47,7 +47,13 @@ void Renderer::line(int x0, int y0, int x1, int y1, const RGB &color) {
   }
 }
 
-void Renderer::triangle(std::array<Vector3f, 3> points, const RGB& color, float *zBuffer) {
+void Renderer::triangle(
+    std::array<Vector3f, 3> points,
+    float intensity,
+    float *zBuffer,
+    std::array<Vector2f, 3> uvs,
+    PPMImage& texture
+) {
   Vector2f min{image.getWidth() - 1, image.getHeight() - 1};
   Vector2f max{0, 0};
   Vector2f bounds = min;
@@ -79,6 +85,15 @@ void Renderer::triangle(std::array<Vector3f, 3> points, const RGB& color, float 
         continue;
       }
 
+      Vector2f uv({ 0, 0 });
+      for (int i = 0; i < 3; i++) {
+        uv[0] += uvs[i][0] * weights[i];
+        uv[1] += uvs[i][1] * weights[i];
+      }
+      uv[0] *= image.getWidth();
+      uv[1] *= image.getHeight();
+      auto sampled = texture.get(uv[0], uv[1]);
+
       float z = 0;
       for (int i = 0; i < 3; i++) {
         z += weights[i] * points[i][2];
@@ -89,7 +104,7 @@ void Renderer::triangle(std::array<Vector3f, 3> points, const RGB& color, float 
         if (zBuffer) {
           zBuffer[zOffset] = z;
         }
-        image.set(x, y, color);
+        image.set(x, y, sampled * intensity);
       }
     }
   }

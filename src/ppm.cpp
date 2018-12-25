@@ -38,6 +38,11 @@ void PPMImage::set(size_t x, size_t y, const RGB& color) {
   data[pixel + 2] = color.b;
 }
 
+RGB PPMImage::get(int x, int y) const {
+  int offset = (x + y * width) * 3;
+  return RGB(data[offset], data[offset + 1], data[offset + 2]);
+}
+
 void PPMImage::write(std::ostream &stream) {
   stream << "P6\n";
   stream << width << " " << height << " " << 255 << "\n";
@@ -50,14 +55,12 @@ PPMImage PPMImage::loadP6(std::istream& stream) {
   std::string type;
   stream >> type;
   assert(type == "P6");
-  int width, height;
-  stream >> width >> height;
+  int width, height, colors;
+  stream >> width >> height >> colors;
+  stream.ignore(1);
 
   PPMImage img(width, height);
-  stream.ignore(1);
-  for (int i = 0; i < width * height * 3; i++) {
-    stream >> img.data[i];
-  }
+  stream.read(reinterpret_cast<char*>(img.data.get()), width * height * 3);
 
   return img;
 }

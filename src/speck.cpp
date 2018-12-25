@@ -20,6 +20,7 @@ int main() {
   head.close();
 
   Vector3f light({ 0, 0, 1 });
+  light.normalize();
 
   int zBufferSize = render.getImage().getWidth() * render.getImage().getHeight();
   float *zBuffer = new float[zBufferSize];
@@ -28,7 +29,7 @@ int main() {
   for (auto &face : obj.faces) {
     std::array<Vector3f, 3> worldCoords;
 
-    std::transform(face.begin(), face.end(), worldCoords.begin(),
+    std::transform(face.vertices.begin(), face.vertices.end(), worldCoords.begin(),
       [&](int i) -> Vector3f { return obj.vertices[i]; }
     );
 

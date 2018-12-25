@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <memory>
-#include <ostream>
+#include <iostream>
 
 #include "color.hpp"
 
@@ -12,6 +12,7 @@ class PPMImage {
     PPMImage(PPMImage &&other);
     ~PPMImage() = default;
 
+    static PPMImage loadP6(std::istream& stream);
     void set(size_t x, size_t y, const RGB &color);
     void write(std::ostream &stream);
     void flipVertically();

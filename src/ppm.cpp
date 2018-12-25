@@ -1,4 +1,5 @@
 #include "ppm.hpp"
+#include <cassert>
 
 PPMImage::PPMImage(size_t width, size_t height) :
   width(width),
@@ -44,3 +45,20 @@ void PPMImage::write(std::ostream &stream) {
     stream << data[i];
   }
 }
+
+PPMImage PPMImage::loadP6(std::istream& stream) {
+  std::string type;
+  stream >> type;
+  assert(type == "P6");
+  int width, height;
+  stream >> width >> height;
+
+  PPMImage img(width, height);
+  stream.ignore(1);
+  for (int i = 0; i < width * height * 3; i++) {
+    stream >> img.data[i];
+  }
+
+  return img;
+}
+

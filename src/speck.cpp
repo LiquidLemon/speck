@@ -19,6 +19,14 @@ int main() {
   obj.read(head);
   head.close();
 
+  std::ifstream diffuse("obj/african_head_diffuse.ppm", std::ios::binary);
+  if (!diffuse.good()) {
+    std::cerr << "Failed to load texture" << std::endl;
+    exit(1);
+  }
+  auto texture = PPMImage::loadP6(diffuse);
+  diffuse.close();
+
   Vector3f light({ 0, 0, 1 });
   light.normalize();
 
